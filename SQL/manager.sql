@@ -9,6 +9,7 @@ delete from IPV4_ILINES where IPV4_SERVER_NAME='atw.irc.hu' and IPV4_MASK='0.0.0
 delete from IPV4_ILINES where IPV4_SERVER_NAME='irc.home.uit.no' and IPV4_MASK='0.0.0.0/1';
 delete from IPV4_ILINES where IPV4_SERVER_NAME='ssl.atw.irc.hu' and IPV4_MASK='0.0.0.0/0';
 delete from IPV4_ILINES where IPV4_SERVER_NAME='irc.nfx.cz' and IPV4_MASK='0.0.0.0/0';
+delete from IPV4_ILINES where IPV4_SERVER_NAME='irc.nfx.cz' and IPV4_MASK='128.0.0.0/1';
 delete from IPV6_ILINES where IPV6_SERVER_NAME='irc.arnes.si' and IPV6_MASK='::/0';
 delete from IPV6_ILINES where IPV6_SERVER_NAME='irc.nebula.fi' and IPV6_MASK='2a00::/8';
 delete from IPV4_ILINES where IPV4_SERVER_NAME='irc.nfx.cz' and IPV4_MASK='0.0.0.0/1';
@@ -20,15 +21,13 @@ delete from IPV4_ILINES where IPV4_SERVER_NAME='irc.nfx.cz' and IPV4_MASK='128.0
 delete from IPV4_ILINES where IPV4_SERVER_NAME='eu.irc6.net' and IPV4_MASK='0.0.0.0/0';
 delete from IPV4_ILINES where IPV4_SERVER_NAME='ircd.seed.net.tw' and IPV4_MASK='0.0.0.0/1';
 DELETE from IPV6_ILINES where IPV6_SERVER_NAME='irc.nlnog.net';
-delete from IPV4_ILINES where IPV4_MASK like '127.0.0.%';
-delete from IPV4_ILINES where IPV4_MASK like '128.0.0.0/1';
-delete from IPV4_ILINES where IPV4_MASK like '192.168.0.0%';
 update IPV4_ILINES set IPV4_SERVER_NAME='irc.belwue.de' where IPV4_SERVER_NAME='belwue.de';
 update IPV4_ILINES set IPV4_SERVER_NAME='irc.fu-berlin.de' where IPV4_SERVER_NAME='fu-berlin.de';
 update IPV4_ILINES set IPV4_SERVER_NAME='irc.man-da.de' where IPV4_SERVER_NAME='MAN-DA.DE';
 update IPV4_ILINES set IPV4_SERVER_NAME='irc.in.tum.de' where IPV4_SERVER_NAME='TUM.DE';
 update IPV4_ILINES set IPV4_SERVER_NAME='irc.uni-erlangen.de' where IPV4_SERVER_NAME='uni-erlangen.de';
+update IPV6_ILINES set IPV6_SERVER_NAME='irc.uni-erlangen.de' where IPV6_SERVER_NAME='uni-erlangen.de';
 update IPV6_ILINES set IPV6_SERVER_NAME='irc.belwue.de' where IPV6_SERVER_NAME='belwue.de';
 update IPV6_ILINES set IPV6_SERVER_NAME='irc.man-da.de' where IPV6_SERVER_NAME='MAN-DA.DE';
-
 COMMIT;
+
