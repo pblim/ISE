@@ -5,6 +5,8 @@ ini_set('display_errors', 0);
 ini_set('session.cookie_httponly', 1);
 ini_set('session.cookie_secure', 1);
 
+
+
 function ip2long_v6($ip) {
     $ip_n = inet_pton($ip);
     $bin = '';
@@ -30,14 +32,13 @@ function getData($IP, $IPversion) {
 	require_once "./dbaccess.php";
 
 	if ($IPversion == 4){
-		$select = "select distinct(IPV4_SERVER_NAME), IPV4_MASK, IPV4_TLD from IPV4_ILINES where IPV4_NETWORK_START <= ". $IP . " and IPV4_NETWORK_STOP >= " . $IP ." order by IPV4_TLD;";
+		$select = "select distinct(IPV4_SERVER_NAME), IPV4_MASK, IPV4_TLD, IPV4_CCTLD from IPV4_ILINES where IPV4_NETWORK_START <= ". $IP . " and IPV4_NETWORK_STOP >= " . $IP ." group by IPV4_SERVER_NAME order by IPV4_CCTLD,IPV4_TLD;";
 		$rowNameServer =  "IPV4_SERVER_NAME";
 		$rowNameMask =  "IPV4_MASK";
 	}
 	elseif ($IPversion == 6){
-		$select = "select distinct(IPV6_SERVER_NAME), IPV6_MASK, IPV6_TLD from IPV6_ILINES where IPV6_NETWORK_START <= ". $IP . " and IPV6_NETWORK_STOP >= " . $IP ." order by IPV6_TLD;";
+		$select = "select distinct(IPV6_SERVER_NAME), IPV6_MASK, IPV6_TLD, IPV6_CCTLD from IPV6_ILINES where IPV6_NETWORK_START <= ". $IP . " and IPV6_NETWORK_STOP >= " . $IP ." group by IPV6_SERVER_NAME order by IPV6_CCTLD, IPV6_TLD;";
 		$rowNameServer =  "IPV6_SERVER_NAME";
-		$rowNameMask =  "IPV6_MASK";
 	}
 	else{		
 		echo "Something went wrong..."; // this can return alone
@@ -65,7 +66,6 @@ function getData($IP, $IPversion) {
 				while ($row = mysqli_fetch_array($stid, MYSQLI_ASSOC)){
 					$i++;
 					$SERVER_NAME =  $row["$rowNameServer"];
-					$MASK = $row["$rowNameMask"];
 					$found_row = true;
 					
 					if ($row_cnt == $i){
@@ -76,7 +76,7 @@ function getData($IP, $IPversion) {
 					}
 				}
 				if ($found_row == false) {
-					echo "maintenance";
+					echo "No results";
 				}
 				echo "</SERVER>";
 			}	
@@ -93,7 +93,7 @@ if(isset($_GET['q'])) {
 		if(filter_var($IP, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6)){
 			
 			if(preg_match('/^::*|^2000\:*|^FC00\:*|^FE80\:*|^FF00\:*|^::ffff:0:0\w*$|^100\:*|^64:ff9b\:*/i', $IP)){
-				echo "<SERVER>Oh come on... give me some public address</SERVER>"; // this can return alone
+				echo "<SERVER>Not a public IP address</SERVER>"; // this can return alone
 			}else{				
 				$IPv6 = ip2long_v6($IP);
 				getData($IPv6, 6);
@@ -102,7 +102,7 @@ if(isset($_GET['q'])) {
 		elseif(filter_var($IP, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4)){
 			
 			if(preg_match('/^127\.\d{1,3}\.\d{1,3}\.\d{1,3}$|^128\.\d{1,3}\.\d{1,3}\.\d{1,3}$|^10\.\d{1,3}\.\d{1,3}\.\d{1,3}$|^192.168\.\d{1,3}\.\d{1,3}$|^255\.\d{1,3}\.\d{1,3}\.\d{1,3}$|^0\.\d{1,3}\.\d{1,3}\.\d{1,3}$|^169.254\.\d{1,3}\.\d{1,3}$|^224\.\d{1,3}\.\d{1,3}\.\d{1,3}$|^240\.\d{1,3}\.\d{1,3}\.\d{1,3}$|^172.(16|17|18|19|20|21|22|23|24|25|26|27|28|29|30|31)\.\d{1,3}\.\d{1,3}$|^169.254\.\d{1,3}\.\d{1,3}$|^100.(6(4|5|6|7|8|9)|((7|8|9)[0-9])|(1(0|1)[0-9])|12(0|1|2|3|4|5|6|7))\.\d{1,3}\.\d{1,3}$|^192.88.99.\d{1,3}$|^198.18\.\d{1,3}\.\d{1,3}$|^198.51.100.\d{1,3}$|^203.0.113.\d{1,3}$/i', $IP)){
-				echo "<SERVER>Oh come on... give me some public address</SERVER>"; // this can return alone
+				echo "<SERVER>Not a public IP address</SERVER>"; // this can return alone
 			}else{
 
 				$IPv4 = ip2long($IP);
