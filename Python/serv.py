@@ -15,21 +15,45 @@ from time import gmtime, strftime
 	
 # https://pythonhosted.org/netaddr/tutorial_01.html
 
-#IRCServersList = ['irc.snt.ipv6.utwente.nl','irc.snt.utwente.nl','openirc.snt.utwente.nl','irc.powertech.no','irc.ifi.uio.no','irc.home.uit.no','ircnet.underworld.no','irc.dotsrc.org','poznan.irc.pl','irc.okit.se','irc.portlane.se','irc.swipnet.se','irc.arnes.si','ircd.seed.net.tw']
+#IRCServersList = ['poznan.irc.pl']
 
 # List of irc servers excluded hubs
-IRCServersList = ['vienna.irc.at','ircnet.clue.be','irc.ipv6.cesnet.cz','irc.felk.cvut.cz','irc.nfx.cz','belwue.de','fu-berlin.de','MAN-DA.DE','TUM.DE','uni-erlangen.de','irc.datanet.ee','irc.starman.ee','irc.elisa.fi','irc.cs.hut.fi','irc2.inet.fi','irc.lut.fi','irc.nebula.fi','irc.opoy.fi','irc.oulu.fi','hub.cc.tut.fi','irc.cc.tut.fi','ircnet.nerim.fr','atw.irc.hu','ssl.atw.irc.hu','irc.fast.net.il','irc1.tiscali.it','ircd.tiscali.it','javairc.tiscali.it','javairc2.tiscali.it','irc6.tophost.it','irc.media.kyoto-u.ac.jp','irc.livedoor.ne.jp','irc.atw-inter.net','ssl.irc.atw-inter.net','eu.irc6.net','eris.us.ircnet.net','irc.us.ircnet.net','irc.nlnog.net','irc.snt.ipv6.utwente.nl','irc.snt.utwente.nl','openirc.snt.utwente.nl','irc.powertech.no','irc.ifi.uio.no','irc.home.uit.no','ircnet.underworld.no','irc.dotsrc.org','poznan.irc.pl','irc.okit.se','irc.portlane.se','irc.swipnet.se','irc.arnes.si','ircd.seed.net.tw']
+IRCServersList = ['vienna.irc.at','ircnet.clue.be','irc.ipv6.cesnet.cz','irc.felk.cvut.cz','irc.nfx.cz','belwue.de','fu-berlin.de','MAN-DA.DE','TUM.DE','uni-erlangen.de','irc.datanet.ee','irc.starman.ee','irc.elisa.fi','irc.cs.hut.fi','irc2.inet.fi','irc.lut.fi','irc.nebula.fi','irc.opoy.fi','irc.oulu.fi','hub.cc.tut.fi','irc.cc.tut.fi','solmu.cc.tut.fi','ircnet.nerim.fr','atw.irc.hu','ssl.atw.irc.hu','irc.fast.net.il','irc1.tiscali.it','ircd.tiscali.it','javairc.tiscali.it','javairc2.tiscali.it','irc6.tophost.it','irc.media.kyoto-u.ac.jp','irc.livedoor.ne.jp','irc.atw-inter.net','ssl.irc.atw-inter.net','eu.irc6.net','eris.us.ircnet.net','irc.us.ircnet.net','irc.nlnog.net','irc.snt.ipv6.utwente.nl','irc.snt.utwente.nl','openirc.snt.utwente.nl','irc.powertech.no','irc.ifi.uio.no','irc.home.uit.no','ircnet.underworld.no','irc.dotsrc.org','poznan.irc.pl','irc.okit.se','irc.portlane.se','irc.swipnet.se','irc.arnes.si','ircd.seed.net.tw']
 
 #Time beetwen querys - 40 second is a good option. 
 global timeSleep
 timeSleep = 40
 
-
-
 # Main
 global failsCount
-failsCount =0
+global listPosition
+listPosition =0 
 
+def writeData(srvName, ipNet, ipBroad, ipMask, cctld, tld, protocol):
+	
+	#print ("DEBUG :" + serverName + "|" + ipNet +"|" + ipBroad + "|" + ipMask + "|" + cctld + "|" + tld + "\n")
+	
+	if protocol == "IPv4":
+		IPv4_FILE.write(serverName + "|" + ipNet +"|" + ipBroad + "|" + ipMask + "|" + cctld + "|" + tld + "\n")
+	
+	if protocol == "IPv6":
+		IPv6_FILE.write(serverName + "|" + ipNet +"|" + ipBroad + "|" + ipMask + "|" + cctld + "|" + tld + "\n")
+	
+
+def getCcTLD(srvName):
+	global serverName
+	
+	ccTLD= serverName.split('.')[-1]
+	
+	return ccTLD.upper()
+	
+def getTLD(srvName):
+	global serverName
+		
+	TLD = serverName.split('.')[-2]
+	
+	return TLD
+	
 def parser_ipv4(IPv4):
 	global serverName
 
@@ -38,14 +62,13 @@ def parser_ipv4(IPv4):
 		ipMask = str(IPv4)
 		ipNetwork = str(int(IPv4.network))
 		ipBroadcast = str(int(IPv4.broadcast))
-		IPv4_FILE.write(serverName + "|" + ipNetwork +"|" + ipBroadcast + "|" + ipMask + "\n")
+		writeData(serverName,  ipNetwork, ipBroadcast, ipMask, getCcTLD(serverName), getTLD(serverName), "IPv4")
 
 	else:
 		
 		ipMask = str(IPv4)
 		ipNetwork = str(int(IPv4.network))
-		IPv4_FILE.write(serverName + "|" + ipNetwork +"|" + ipNetwork + "|" + ipMask + "\n")
-	
+		writeData(serverName,  ipNetwork, ipNetwork, ipMask, getCcTLD(serverName), getTLD(serverName), "IPv4")
 
 def parser_ipv6(IPv6):
 	global serverName
@@ -55,16 +78,14 @@ def parser_ipv6(IPv6):
 		ipMask = str(IPv6)
 		ipNetwork = str(int(IPv6.network))
 		ipBroadcast = str(int(IPv6.broadcast))
-		IPv6_FILE.write(serverName + "|" + ipNetwork +"|" + ipBroadcast + "|" + ipMask + "\n")
+		writeData(serverName,  ipNetwork, ipBroadcast, ipMask, getCcTLD(serverName), getTLD(serverName), "IPv6")
 	
 	else:
 		
 		ipMask = str(IPv6)
 		ipNetwork = str(int(IPv6.network))
-		IPv6_FILE.write(serverName + "|" + ipNetwork +"|" + ipNetwork + "|" + ipMask + "\n")
+		writeData(serverName,  ipNetwork, ipNetwork, ipMask, getCcTLD(serverName), getTLD(serverName), "IPv6")
 	
-	
-
 def on_statsiline(connection, event):
 	
 	ipToParse = event.arguments[1]
@@ -86,16 +107,16 @@ def on_statsiline(connection, event):
 	
 	except AddrFormatError:
 		ERROR_FILE.write(strftime("%Y-%m-%d %H:%M:%S", gmtime()) + " ERROR: netaddr.core.AddrFormatError: invalid IPNetwork -> " + ipToParse + "\n")
-	
-		
+			
 def on_endofstats(connection, event):
 
 	sys.stdout.flush()
 	global serverName
-	global listPosition
 	global listSizeMax
 	global failsCount
+	global listPosition
 	listPosition +=1
+	failsCount =0
 	
 	if listPosition == listSizeMax:
 	
@@ -103,6 +124,7 @@ def on_endofstats(connection, event):
 		IPv4_FILE.close()
 		IPv6_FILE.close()
 		ERROR_FILE.close()
+		STATUS_FILE.write(strftime("%Y-%m-%d %H:%M:%S", gmtime()) + "INFO: Script finished...\n")
 		STATUS_FILE.close()
 		print ("Script properly end")
 		sys.exit(0)
@@ -123,6 +145,8 @@ def on_connect(connection, event):
 	global listPosition
 	global failsCount
 	sys.stdout.flush()
+	
+	STATUS_FILE.write(strftime("%Y-%m-%d %H:%M:%S", gmtime()) + "INFO: Script started...\n")
 	
 	try:
 		serverName = IRCServersList[listPosition]
@@ -149,13 +173,12 @@ def on_tryagain(connection, event):
 		
 def on_disconnect(connection, event):
 	print("Connection reset from remote server: " + serverName)
-	sys.stdout.write("Connecting to server...\n")
 	sys.stdout.flush()
 	global failsCount
 	
 	failsCount +=1
 	
-	if failsCount > 5:
+	if failsCount > 7:
 		STATUS_FILE.write(strftime("%Y-%m-%d %H:%M:%S", gmtime()) + "CRITICAL: Can not get list from: " + serverName + "\n")
 		failsCount =0
 		listPosition +=1
@@ -183,10 +206,9 @@ def main():
 	global listPosition
 	global listSizeMax
 	global failsCount
+	failsCount=0
 	
 	listSizeMax = len(IRCServersList)
-	listPosition =0 
-	
 	
 	IPv4_FILE = open("./db/IPV4_FILE.db", "a")
 	IPv6_FILE = open("./db/IPV6_FILE.db", "a")
