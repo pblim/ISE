@@ -86,6 +86,9 @@ function getData($IP, $IPversion) {
 
 if(isset($_GET['q'])) {
 	
+	//echo "Maintenance";
+	//exit;
+	
 	$IP = $_GET['q'];
 	$IP = htmlentities($IP, ENT_QUOTES, "UTF-8");
 	$IP = preg_replace('/\s+/', '', $IP);

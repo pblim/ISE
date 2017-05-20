@@ -53,12 +53,12 @@ function getData($IP, $IPversion) {
 	unset($_POST['search']);
 		
 	if ($IPversion == 4){
-		$select = "select distinct(IPV4_SERVER_NAME), IPV4_MASK, IPV4_TLD from IPV4_ILINES where IPV4_NETWORK_START <= ". $IP . " and IPV4_NETWORK_STOP >= " . $IP ." order by IPV4_TLD desc;";
+		$select = "select distinct(IPV4_SERVER_NAME), IPV4_MASK, IPV4_CCTLD, IPV4_TLD from IPV4_ILINES where IPV4_NETWORK_START <= ". $IP . " and IPV4_NETWORK_STOP >= " . $IP ." group by IPV4_SERVER_NAME order by IPV4_CCTLD, IPV4_TLD desc;";
 		$rowNameServer =  "IPV4_SERVER_NAME";
 		$rowNameMask =  "IPV4_MASK";
 	}
 	elseif ($IPversion == 6){
-		$select = "select distinct(IPV6_SERVER_NAME), IPV6_MASK, IPV6_TLD from IPV6_ILINES where IPV6_NETWORK_START <= ". $IP . " and IPV6_NETWORK_STOP >= " . $IP ." order by IPV6_TLD desc;";
+		$select = "select distinct(IPV6_SERVER_NAME), IPV6_MASK, IPV6_CCTLD, IPV6_TLD from IPV6_ILINES where IPV6_NETWORK_START <= ". $IP . " and IPV6_NETWORK_STOP >= " . $IP ." group by IPV6_SERVER_NAME order by IPV6_CCTLD, IPV6_TLD desc;";
 		$rowNameServer =  "IPV6_SERVER_NAME";
 		$rowNameMask =  "IPV6_MASK";
 	}
