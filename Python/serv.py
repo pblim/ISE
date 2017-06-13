@@ -15,7 +15,7 @@ from time import gmtime, strftime
 	
 # https://pythonhosted.org/netaddr/tutorial_01.html
 
-#IRCServersList = ['poznan.irc.pl']
+#RCServersList = ['poznan.irc.pl','irc.okit.se']
 
 # List of irc servers excluded hubs
 IRCServersList = ['vienna.irc.at','ircnet.clue.be','irc.ipv6.cesnet.cz','irc.felk.cvut.cz','irc.nfx.cz','belwue.de','fu-berlin.de','MAN-DA.DE','TUM.DE','uni-erlangen.de','irc.datanet.ee','irc.starman.ee','irc.elisa.fi','irc.cs.hut.fi','irc2.inet.fi','irc.lut.fi','irc.nebula.fi','irc.opoy.fi','irc.oulu.fi','hub.cc.tut.fi','irc.cc.tut.fi','solmu.cc.tut.fi','ircnet.nerim.fr','atw.irc.hu','ssl.atw.irc.hu','irc.fast.net.il','irc1.tiscali.it','ircd.tiscali.it','javairc.tiscali.it','javairc2.tiscali.it','irc6.tophost.it','irc.media.kyoto-u.ac.jp','irc.livedoor.ne.jp','irc.atw-inter.net','ssl.irc.atw-inter.net','eu.irc6.net','eris.us.ircnet.net','irc.us.ircnet.net','irc.nlnog.net','irc.snt.ipv6.utwente.nl','irc.snt.utwente.nl','openirc.snt.utwente.nl','irc.powertech.no','irc.ifi.uio.no','irc.home.uit.no','ircnet.underworld.no','irc.dotsrc.org','poznan.irc.pl','irc.okit.se','irc.portlane.se','irc.swipnet.se','irc.arnes.si','ircd.seed.net.tw']
@@ -123,7 +123,7 @@ def on_endofstats(connection, event):
 		connection.quit("Leaving")
 		IPv4_FILE.close()
 		IPv6_FILE.close()
-		ERROR_FILE.close()
+		#ERROR_FILE.close()
 		STATUS_FILE.write(strftime("%Y-%m-%d %H:%M:%S", gmtime()) + "INFO: Script finished...\n")
 		STATUS_FILE.close()
 		print ("Script properly end")
@@ -210,10 +210,10 @@ def main():
 	
 	listSizeMax = len(IRCServersList)
 	
-	IPv4_FILE = open("./db/IPV4_FILE.db", "a")
-	IPv6_FILE = open("./db/IPV6_FILE.db", "a")
-	ERROR_FILE = open("./db/error.log", "a")
-	STATUS_FILE = open("./db/status.log", "a")
+	IPv4_FILE = open("/home/pbl/ilinebot/db/IPV4_FILE.db", "a")
+	IPv6_FILE = open("/home/pbl/ilinebot/db/IPV6_FILE.db", "a")
+	ERROR_FILE = open("/home/pbl/ilinebot/db/error.log", "a")
+	STATUS_FILE = open("/home/pbl/ilinebot/db/status.log", "a")
 	
 	serverName = IRCServersList[listPosition]
 	args = get_args()
