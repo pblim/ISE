@@ -12,8 +12,6 @@ from netaddr import *
 import pprint
 import time
 from time import gmtime, strftime
-	
-# https://pythonhosted.org/netaddr/tutorial_01.html
 
 #RCServersList = ['poznan.irc.pl','irc.okit.se']
 
@@ -28,6 +26,16 @@ timeSleep = 40
 global failsCount
 global listPosition
 listPosition =0 
+
+def scriptEnd(connection):
+	IPv4_FILE.close()
+	IPv6_FILE.close()
+	STATUS_FILE.close()
+	ERROR_FILE.close()
+	connection.quit("Leaving")
+	print ("Script properly end")
+	sys.exit(0)
+
 
 def writeData(srvName, ipNet, ipBroad, ipMask, cctld, tld, protocol):
 	
@@ -120,14 +128,7 @@ def on_endofstats(connection, event):
 	
 	if listPosition == listSizeMax:
 	
-		connection.quit("Leaving")
-		IPv4_FILE.close()
-		IPv6_FILE.close()
-		#ERROR_FILE.close()
-		STATUS_FILE.write(strftime("%Y-%m-%d %H:%M:%S", gmtime()) + "INFO: Script finished...\n")
-		STATUS_FILE.close()
-		print ("Script properly end")
-		sys.exit(0)
+		scriptEnd(connection)
 	
 	print ("Waiting for next query...")
 	time.sleep(40)
