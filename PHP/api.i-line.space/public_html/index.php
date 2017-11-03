@@ -116,4 +116,20 @@ if(isset($_GET['q'])) {
 			echo "Not an IP(4/6) address"; // this can return alone
 		}
 }
+
+if(isset($_GET['u']) && $_GET['u']=='getLastUpdate' ) {
+	require_once "./dbaccess.php";
+		
+	$connection = @new mysqli($host, $db_user, $db_password, $db_name);
+
+	if($connection->connect_errno!=0){
+		echo "Something went wrong..."; // this can return alone
+	}
+	else{
+		$result = mysqli_fetch_assoc(mysqli_query($connection, "SELECT UP_VALUE FROM UPDATES WHERE UP_NAME='lastUpdate'"));
+		$lastUpdateResult = $result['UP_VALUE'];
+		echo "$lastUpdateResult";
+	}
+	$connection->close();
+}
 ?>
