@@ -1,6 +1,7 @@
 <?php
+session_name ('I-LINE');
 session_start();
-error_reporting(E_ERROR);
+//error_reporting(E_ERROR);
 ini_set('display_errors', 0);
 ini_set('session.cookie_httponly', 1);
 ini_set('session.cookie_secure', 1);
@@ -75,8 +76,8 @@ function getData($IP, $IPversion) {
 		}
 		else{
 			
-			
 			mysqli_query($connection,"UPDATE STATS SET STATS_QUERY=STATS_QUERY+1;");
+			
 			$found_row = false;
 	
 			if($stid = @$connection->query("$select")){
@@ -111,6 +112,24 @@ function getStats(){
 		return $statsCount;
 	}
 	$connection->close();
+}
+
+function getLastUpdate(){
+	include ("dbaccess.php");
+		
+	$connection = @new mysqli($host, $db_user, $db_password, $db_name);
+
+	if($connection->connect_errno!=0){
+		echo "Something went wrong..."; // this can return alone
+	}
+	else{
+		$result = mysqli_fetch_assoc(mysqli_query($connection, "SELECT UP_VALUE FROM UPDATES WHERE UP_NAME='lastUpdate'"));
+		//$lastUpdateResult = $result['UP_VALUE'];
+		$lastUpdateResult = date('d-m-Y', $result['UP_VALUE']);
+		return $lastUpdateResult;
+	}
+	$connection->close();
+	
 }
 
 ?>
@@ -257,7 +276,7 @@ EOT;
 }
 ?>
 </table>
-<div id="stats"><p class="stats" align="center">Number of queries: <?php echo getStats(); ?> </p></div>
+<div id="stats"><p class="stats" align="center">Queries: <?php echo getStats(); ?> | Last update: <?php echo getLastUpdate(); ?> </p></div>
 <div id="footer"><p class="footer" align="center">© pbl@IRCNet, 2017</p></div>
 </body>
 </html>
