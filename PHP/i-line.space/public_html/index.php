@@ -6,7 +6,10 @@ ini_set('display_errors', 0);
 ini_set('session.cookie_httponly', 1);
 ini_set('session.cookie_secure', 1);
 
-
+if(isset($_GET['status']) && $_GET['status']=='check' ) {
+	echo "OK";
+	exit;
+}
 
 function get_client_ip() {
     $ipaddress = '';

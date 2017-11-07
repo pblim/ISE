@@ -132,4 +132,8 @@ if(isset($_GET['u']) && $_GET['u']=='getLastUpdate' ) {
 	}
 	$connection->close();
 }
+
+if(isset($_GET['status']) && $_GET['status']=='check' ) {
+	echo "OK";
+}
 ?>
