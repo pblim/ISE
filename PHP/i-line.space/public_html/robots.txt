@@ -1,3 +1,0 @@
-User-Agent: *
-Disallow: /opers/
-Disallow: /css/
