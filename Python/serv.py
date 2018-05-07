@@ -8,17 +8,15 @@ import argparse
 import sys
 import jaraco.logging
 import irc.client
-from netaddr import *
+import requests
 import pprint
 import time
+import re
 from time import gmtime, strftime
+from netaddr import *
+from bs4 import BeautifulSoup
 
-#RCServersList = ['poznan.irc.pl','irc.okit.se']
-
-# List of irc servers excluded hubs
-IRCServersList = ['vienna.irc.at','ircnet.clue.be','irc2.ipv6.cesnet.cz','irc.felk.cvut.cz','irc.nfx.cz','belwue.de','fu-berlin.de','MAN-DA.DE','TUM.DE','uni-erlangen.de','irc.datanet.ee','irc.starman.ee','irc.elisa.fi','irc.cs.hut.fi','irc2.inet.fi','irc.lut.fi','irc.nebula.fi','irc.opoy.fi','irc.oulu.fi','hub.cc.tut.fi','irc.cc.tut.fi','solmu.cc.tut.fi','ircnet.nerim.fr','atw.irc.hu','ssl.atw.irc.hu','irc.fast.net.il','irc1.tiscali.it','ircd.tiscali.it','javairc.tiscali.it','javairc2.tiscali.it','irc6.tophost.it','irc.media.kyoto-u.ac.jp','irc.livedoor.ne.jp','irc.atw-inter.net','ssl.irc.atw-inter.net','eu.irc6.net','eris.us.ircnet.net','irc.us.ircnet.net','irc.nlnog.net','irc.snt.ipv6.utwente.nl','irc.snt.utwente.nl','openirc.snt.utwente.nl','irc.powertech.no','irc.ifi.uio.no','irc.home.uit.no','ircnet.underworld.no','irc.dotsrc.org','poznan.irc.pl','irc.okit.se','irc.portlane.se','irc.swipnet.se','irc.arnes.si','ircd.seed.net.tw']
-
-#Time beetwen querys - 40 second is a good option. 
+#Time beetwen querys - 40 second is a good TIME. 
 global timeSleep
 timeSleep = 40
 
@@ -26,6 +24,29 @@ timeSleep = 40
 global failsCount
 global listPosition
 listPosition =0 
+global PATH
+PATH = '/home/pbl/ilinebot/db'
+IRCServersList = []
+
+def getList():
+
+	try:
+		r = requests.get('http://irc.tu-ilmenau.de/all_servers/')
+		soup = BeautifulSoup(r.content, "html.parser")
+		i =0
+		for link in soup.find_all('a', href = re.compile(r'.*details.cgi*')):
+			if (link.get_text().lower().split('.')[0]) != 'hub':
+				s = link.get_text().lower()
+				match = re.search(r'\]', s)
+				if match:
+					s = s.split(' ')[0]
+				IRCServersList.insert(i, s)
+				i +=1
+		for x in IRCServersList:
+			print (x)
+		
+	except:
+		sys.exit(1)
 
 def scriptEnd(connection):
 	IPv4_FILE.close()
@@ -35,7 +56,6 @@ def scriptEnd(connection):
 	connection.quit("Leaving")
 	print ("Script properly end")
 	sys.exit(0)
-
 
 def writeData(srvName, ipNet, ipBroad, ipMask, cctld, tld, protocol):
 	
@@ -197,6 +217,8 @@ def get_args():
 
 def main():
 
+	getList()
+	
 	global IPv4_FILE
 	global IPv6_FILE
 	global ERROR_FILE
@@ -206,18 +228,14 @@ def main():
 	global listSizeMax
 	global failsCount
 	failsCount=0
-	
 	listSizeMax = len(IRCServersList)
-	
-	IPv4_FILE = open("/home/pbl/ilinebot/db/IPV4_FILE.db", "a")
-	IPv6_FILE = open("/home/pbl/ilinebot/db/IPV6_FILE.db", "a")
-	ERROR_FILE = open("/home/pbl/ilinebot/db/error.log", "a")
-	STATUS_FILE = open("/home/pbl/ilinebot/db/status.log", "a")
-	
+	IPv4_FILE = open(PATH + "/IPV4_FILE.db", "a")
+	IPv6_FILE = open(PATH + "/IPV6_FILE.db", "a")
+	ERROR_FILE = open(PATH + "/error.log", "a")
+	STATUS_FILE = open(PATH + "/status.log", "a")
 	serverName = IRCServersList[listPosition]
 	args = get_args()
 	jaraco.logging.setup(args)
-
 	reactor = irc.client.Reactor()
 	sys.stdout.write("Connecting to server...\n")
 	sys.stdout.flush()
