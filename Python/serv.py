@@ -22,7 +22,6 @@ timeSleep = 40
 
 # Main
 global failsCount
-failsCount =0
 global listPosition
 listPosition =0 
 global PATH
@@ -36,8 +35,8 @@ def getList():
 		soup = BeautifulSoup(r.content, "html.parser")
 		i =0
 		for link in soup.find_all('a', href = re.compile(r'.*details.cgi*')):
-			if (link.get_text().lower().split('.')[0]) != 'hub':
-				s = link.get_text().lower()
+			s = str(link.get_text().lower())
+			if (str(s.split('.')[0]) != 'hub' and str(s.split('.')[0]) != 'irc-2112p3'):
 				match = re.search(r'\]', s)
 				if match:
 					s = s.split(' ')[0]
@@ -228,6 +227,7 @@ def main():
 	global listPosition
 	global listSizeMax
 	global failsCount
+	failsCount=0
 	listSizeMax = len(IRCServersList)
 	IPv4_FILE = open(PATH + "/IPV4_FILE.db", "a")
 	IPv6_FILE = open(PATH + "/IPV6_FILE.db", "a")
