@@ -22,6 +22,7 @@ timeSleep = 40
 
 # Main
 global failsCount
+failsCount =0
 global listPosition
 listPosition =0 
 global PATH
@@ -227,7 +228,6 @@ def main():
 	global listPosition
 	global listSizeMax
 	global failsCount
-	failsCount=0
 	listSizeMax = len(IRCServersList)
 	IPv4_FILE = open(PATH + "/IPV4_FILE.db", "a")
 	IPv6_FILE = open(PATH + "/IPV6_FILE.db", "a")
