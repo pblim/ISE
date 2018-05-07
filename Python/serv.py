@@ -29,7 +29,6 @@ PATH = '/home/pbl/ilinebot/db'
 IRCServersList = []
 
 def getList():
-
 	try:
 		r = requests.get('http://irc.tu-ilmenau.de/all_servers/')
 		soup = BeautifulSoup(r.content, "html.parser")
@@ -58,9 +57,6 @@ def scriptEnd(connection):
 	sys.exit(0)
 
 def writeData(srvName, ipNet, ipBroad, ipMask, cctld, tld, protocol):
-	
-	#print ("DEBUG :" + serverName + "|" + ipNet +"|" + ipBroad + "|" + ipMask + "|" + cctld + "|" + tld + "\n")
-	
 	if protocol == "IPv4":
 		IPv4_FILE.write(serverName + "|" + ipNet +"|" + ipBroad + "|" + ipMask + "|" + cctld + "|" + tld + "\n")
 	
@@ -114,8 +110,7 @@ def parser_ipv6(IPv6):
 		ipNetwork = str(int(IPv6.network))
 		writeData(serverName,  ipNetwork, ipNetwork, ipMask, getCcTLD(serverName), getTLD(serverName), "IPv6")
 	
-def on_statsiline(connection, event):
-	
+def on_statsiline(connection, event):	
 	ipToParse = event.arguments[1]
 	ipToParse = ipToParse.replace("*", "")
 	ipToParse = ipToParse.replace("@", "")
@@ -137,7 +132,6 @@ def on_statsiline(connection, event):
 		ERROR_FILE.write(strftime("%Y-%m-%d %H:%M:%S", gmtime()) + " ERROR: netaddr.core.AddrFormatError: invalid IPNetwork -> " + ipToParse + "\n")
 			
 def on_endofstats(connection, event):
-
 	sys.stdout.flush()
 	global serverName
 	global listSizeMax
@@ -161,7 +155,6 @@ def on_endofstats(connection, event):
 	except:
 		ERROR_FILE.write(strftime("%Y-%m-%d %H:%M:%S", gmtime()) + " ERROR: Something went wrong while trying to get i line list from: " + serverName + "\n")
 
-	
 def on_connect(connection, event):
 	global listPosition
 	global failsCount
@@ -186,15 +179,13 @@ def on_tryagain(connection, event):
 	global listPosition
 	sys.stdout.flush()
 	listPosition -=1
-	print("IRC server is busy, waiting...: " + serverName)
-	
+	print("IRC server is busy, waiting...: " + serverName)	
 	on_endofstats(connection, event)	
 		
 def on_disconnect(connection, event):
 	print("Connection reset from remote server: " + serverName)
 	sys.stdout.flush()
-	global failsCount
-	
+	global failsCount	
 	failsCount +=1
 	
 	if failsCount > 7:
@@ -205,7 +196,6 @@ def on_disconnect(connection, event):
 	print("global failsCount" + str(failsCount))	
 	print("Retry on: " + serverName)
 	main()
-
 
 def get_args():
 	parser = argparse.ArgumentParser()
