@@ -180,7 +180,7 @@ def on_tryagain(connection, event):
 	print ("FAILS COUNT " + str(failsCount))
 	print("IRC server is busy, waiting...: " + serverName)
 
-	if failsCount > 2:
+	if failsCount > 7:
 		STATUS_FILE.write(strftime("%Y-%m-%d %H:%M:%S", gmtime()) + "CRITICAL: Can not get list from: " + serverName + "\n")
 		failsCount =0
 		listPosition +=1
@@ -195,8 +195,7 @@ def on_disconnect(connection, event):
 	
 	failsCount +=1
 		
-	if failsCount > 2:
-		print ("DEBUG JESTEM??")
+	if failsCount > 7:
 		STATUS_FILE.write(strftime("%Y-%m-%d %H:%M:%S", gmtime()) + "CRITICAL: Can not get list from: " + serverName + "\n")
 		IPv4_FILE.close()
 		IPv6_FILE.close()
