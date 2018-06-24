@@ -169,7 +169,7 @@ def on_nosuchserver(connection, event):
 	global listPosition
 	sys.stdout.flush()
 	print("No such server: " + serverName)
-	ERROR_FILE.write(strftime("%Y-%m-%d %H:%M:%S", gmtime()) + " ERROR: No such server: " + serverName + "\n")
+	STATUS_FILE.write(strftime("%Y-%m-%d %H:%M:%S", gmtime()) + "CRITICAL: No such server: " + serverName + "\n")
 	scriptEnd(connection)
 
 def on_tryagain(connection, event):
