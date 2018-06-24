@@ -18,7 +18,7 @@ from bs4 import BeautifulSoup
 
 #Time beetwen querys - 15 second is a good TIME. 
 global timeSleep
-timeSleep = 15
+timeSleep = 20
 
 # Main
 global failsCount, listPosition, PATH, isListRequired
@@ -170,7 +170,7 @@ def on_nosuchserver(connection, event):
 	sys.stdout.flush()
 	print("No such server: " + serverName)
 	ERROR_FILE.write(strftime("%Y-%m-%d %H:%M:%S", gmtime()) + " ERROR: No such server: " + serverName + "\n")
-	on_endofstats(connection, event)
+	scriptEnd(connection)
 
 def on_tryagain(connection, event):
 	global listPosition, failsCount
@@ -182,8 +182,11 @@ def on_tryagain(connection, event):
 
 	if failsCount > 7:
 		STATUS_FILE.write(strftime("%Y-%m-%d %H:%M:%S", gmtime()) + "CRITICAL: Can not get list from: " + serverName + "\n")
-		failsCount =0
-		listPosition +=1
+		IPv4_FILE.close()
+		IPv6_FILE.close()
+		STATUS_FILE.close()
+		ERROR_FILE.close()
+		sys.exit(1)
 	
 	on_endofstats(connection, event)	
 
