@@ -16,9 +16,9 @@ from time import gmtime, strftime
 from netaddr import *
 from bs4 import BeautifulSoup
 
-#Time beetwen querys - 40 second is a good TIME. 
+#Time beetwen querys - 15 second is a good TIME. 
 global timeSleep
-timeSleep = 40
+timeSleep = 15
 
 # Main
 global failsCount, listPosition, PATH, isListRequired
@@ -44,11 +44,12 @@ def getList():
 					s = s.split(' ')[0]
 				IRCServersList.insert(i, s)
 				i +=1
-		for x in IRCServersList:
-			print (x)
+		#for x in IRCServersList:
+			#print (x)
 
 	except:
-		sys.exit(1)
+		scriptEnd(connection)
+
 
 def scriptEnd(connection):
 	IPv4_FILE.close()
@@ -179,7 +180,7 @@ def on_tryagain(connection, event):
 	print ("FAILS COUNT " + str(failsCount))
 	print("IRC server is busy, waiting...: " + serverName)
 
-	if failsCount > 7:
+	if failsCount > 2:
 		STATUS_FILE.write(strftime("%Y-%m-%d %H:%M:%S", gmtime()) + "CRITICAL: Can not get list from: " + serverName + "\n")
 		failsCount =0
 		listPosition +=1
@@ -190,15 +191,20 @@ def on_disconnect(connection, event):
 	print("Connection reset from remote server: " + serverName)
 	sys.stdout.flush()
 	global failsCount
+	time.sleep(timeSleep)
 	
 	failsCount +=1
 		
-	if failsCount > 7:
+	if failsCount > 2:
+		print ("DEBUG JESTEM??")
 		STATUS_FILE.write(strftime("%Y-%m-%d %H:%M:%S", gmtime()) + "CRITICAL: Can not get list from: " + serverName + "\n")
-		failsCount =0
-		listPosition +=1
+		IPv4_FILE.close()
+		IPv6_FILE.close()
+		STATUS_FILE.close()
+		ERROR_FILE.close()
+		sys.exit(1)
 		
-	print("global failsCount" + str(failsCount))	
+	print("global failsCount " + str(failsCount))
 	print("Retry on: " + serverName)
 	main()
 
@@ -236,7 +242,7 @@ def main():
 		c = reactor.server().connect(args.server, args.port, args.nickname)
 	except irc.client.ServerConnectionError as x:
 		print(x)
-		sys.exit(1)
+		scriptEnd(connection)
 
 	c.add_global_handler("welcome", on_connect)
 	c.add_global_handler("statsiline", on_statsiline)
