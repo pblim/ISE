@@ -24,13 +24,14 @@ timeSleep = 40
 global failsCount, listPosition, PATH, isListRequired
 isListRequired = True
 listPosition =0 
+failsCount = 0
 PATH = '/home/iline/ilinebot/db'
 IRCServersList = []
 
 def getList():
-	
+
 	isListRequired = False
-	
+
 	try:
 		r = requests.get('http://irc.tu-ilmenau.de/all_servers/')
 		soup = BeautifulSoup(r.content, "html.parser")
@@ -45,7 +46,7 @@ def getList():
 				i +=1
 		for x in IRCServersList:
 			print (x)
-		
+
 	except:
 		sys.exit(1)
 
@@ -59,30 +60,25 @@ def scriptEnd(connection):
 	sys.exit(0)
 
 def writeData(srvName, ipNet, ipBroad, ipMask, cctld, tld, protocol):
-	
+
 	#print ("DEBUG :" + serverName + "|" + ipNet +"|" + ipBroad + "|" + ipMask + "|" + cctld + "|" + tld + "\n")
-	
+
 	if protocol == "IPv4":
 		IPv4_FILE.write(serverName + "|" + ipNet +"|" + ipBroad + "|" + ipMask + "|" + cctld + "|" + tld + "\n")
-	
+
 	if protocol == "IPv6":
 		IPv6_FILE.write(serverName + "|" + ipNet +"|" + ipBroad + "|" + ipMask + "|" + cctld + "|" + tld + "\n")
-	
 
 def getCcTLD(srvName):
 	global serverName
-	
 	ccTLD= serverName.split('.')[-1]
-	
 	return ccTLD.upper()
-	
+
 def getTLD(srvName):
 	global serverName
-		
 	TLD = serverName.split('.')[-2]
-	
 	return TLD
-	
+
 def parser_ipv4(IPv4):
 	global serverName
 
@@ -108,20 +104,20 @@ def parser_ipv6(IPv6):
 		ipNetwork = str(int(IPv6.network))
 		ipBroadcast = str(int(IPv6.broadcast))
 		writeData(serverName,  ipNetwork, ipBroadcast, ipMask, getCcTLD(serverName), getTLD(serverName), "IPv6")
-	
+
 	else:
 		
 		ipMask = str(IPv6)
 		ipNetwork = str(int(IPv6.network))
 		writeData(serverName,  ipNetwork, ipNetwork, ipMask, getCcTLD(serverName), getTLD(serverName), "IPv6")
-	
+
 def on_statsiline(connection, event):
 	
 	ipToParse = event.arguments[1]
 	ipToParse = ipToParse.replace("*", "")
 	ipToParse = ipToParse.replace("@", "")
 	global serverName, failsCount
-	 
+
 	try:
 		IPNet = IPNetwork(ipToParse)
 
@@ -132,33 +128,30 @@ def on_statsiline(connection, event):
 		elif IPNet.version == 6:
 			
 			parser_ipv6(IPNet)
-	
+
 	except AddrFormatError:
 		ERROR_FILE.write(strftime("%Y-%m-%d %H:%M:%S", gmtime()) + " ERROR: netaddr.core.AddrFormatError: invalid IPNetwork -> " + ipToParse + "\n")
 			
 def on_endofstats(connection, event):
 
 	sys.stdout.flush()
-	global serverName, listSizeMax, failsCount, listPosition
+	global serverName, listSizeMax, listPosition
 	listPosition +=1
-	failsCount =0
 	
 	if listPosition == listSizeMax:
 	
 		scriptEnd(connection)
-	
+
 	print ("Waiting for next query...")
-	time.sleep(30)
-	
+	time.sleep(timeSleep)
+
 	try:
 		serverName = IRCServersList[listPosition]
 		print("Getting list from: " + serverName + " [ " + str(listPosition+1) + " / " + str(listSizeMax) + " ]")
 		connection.stats("I",IRCServersList[listPosition])
-		
 	except:
 		ERROR_FILE.write(strftime("%Y-%m-%d %H:%M:%S", gmtime()) + " ERROR: Something went wrong while trying to get i line list from: " + serverName + "\n")
 
-	
 def on_connect(connection, event):
 	global listPosition, failsCount
 	sys.stdout.flush()
@@ -179,20 +172,27 @@ def on_nosuchserver(connection, event):
 	on_endofstats(connection, event)
 
 def on_tryagain(connection, event):
-	global listPosition
+	global listPosition, failsCount
 	sys.stdout.flush()
 	listPosition -=1
+	failsCount +=1
+	print ("FAILS COUNT " + str(failsCount))
 	print("IRC server is busy, waiting...: " + serverName)
+
+	if failsCount > 7:
+		STATUS_FILE.write(strftime("%Y-%m-%d %H:%M:%S", gmtime()) + "CRITICAL: Can not get list from: " + serverName + "\n")
+		failsCount =0
+		listPosition +=1
 	
 	on_endofstats(connection, event)	
-		
+
 def on_disconnect(connection, event):
 	print("Connection reset from remote server: " + serverName)
 	sys.stdout.flush()
 	global failsCount
 	
 	failsCount +=1
-	
+		
 	if failsCount > 7:
 		STATUS_FILE.write(strftime("%Y-%m-%d %H:%M:%S", gmtime()) + "CRITICAL: Can not get list from: " + serverName + "\n")
 		failsCount =0
@@ -201,7 +201,6 @@ def on_disconnect(connection, event):
 	print("global failsCount" + str(failsCount))	
 	print("Retry on: " + serverName)
 	main()
-
 
 def get_args():
 	parser = argparse.ArgumentParser()
@@ -221,8 +220,7 @@ def main():
 		except:
 			print("Can not pares list from the website")
 			sys.exit(1)
-	
-	failsCount=0
+
 	listSizeMax = len(IRCServersList)
 	IPv4_FILE = open(PATH + "/IPV4_FILE.db", "a")
 	IPv6_FILE = open(PATH + "/IPV6_FILE.db", "a")
