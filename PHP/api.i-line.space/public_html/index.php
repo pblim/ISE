@@ -1,11 +1,8 @@
 <?php
-session_start();
-error_reporting(E_ERROR);
+//error_reporting(E_ERROR);
 ini_set('display_errors', 0);
 ini_set('session.cookie_httponly', 1);
 ini_set('session.cookie_secure', 1);
-
-
 
 function ip2long_v6($ip) {
     $ip_n = inet_pton($ip);
@@ -43,30 +40,23 @@ function getData($IP, $IPversion) {
 	else{		
 		echo "Something went wrong..."; // this can return alone
 	}
-
-		$connection = @new mysqli($host, $db_user, $db_password, $db_name);
-		
+		$connection = @new mysqli($host, $db_user, $db_password, $db_name);	
 		if($connection->connect_errno!=0){
 			
 			echo "Something went wrong..."; // this can return alone
 		}
 		else{
 			
-			mysqli_query($connection,"UPDATE STATS SET STATS_QUERY=STATS_QUERY+1;");
-						
+			mysqli_query($connection,"UPDATE STATS SET STATS_QUERY=STATS_QUERY+1;");						
 			if($stid = @$connection->query("$select")){
 			
 			$row_cnt = $stid->num_rows;
-
-				echo "<SERVER>";
-				
+				echo "<SERVER>";				
 				$i = 0;
-				$found_row = false;
 				
 				while ($row = mysqli_fetch_array($stid, MYSQLI_ASSOC)){
 					$i++;
 					$SERVER_NAME =  $row["$rowNameServer"];
-					$found_row = true;
 					
 					if ($row_cnt == $i){
 						echo "$SERVER_NAME";
@@ -75,7 +65,7 @@ function getData($IP, $IPversion) {
 						echo "$SERVER_NAME <> ";
 					}
 				}
-				if ($found_row == false) {
+				if ($i == 0) {
 					echo "No results";
 				}
 				echo "</SERVER>";
@@ -87,11 +77,10 @@ function getData($IP, $IPversion) {
 if(isset($_GET['q'])) {
 	
 	//echo "Maintenance";
-	//exit;
+	// exit;
 	
 	$IP = $_GET['q'];
 	$IP = htmlentities($IP, ENT_QUOTES, "UTF-8");
-	$IP = preg_replace('/\s+/', '', $IP);
 
 		if(filter_var($IP, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6)){
 			
@@ -133,7 +122,4 @@ if(isset($_GET['u']) && $_GET['u']=='getLastUpdate' ) {
 	$connection->close();
 }
 
-if(isset($_GET['status']) && $_GET['status']=='check' ) {
-	echo "OK";
-}
 ?>
