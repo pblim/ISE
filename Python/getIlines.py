@@ -30,6 +30,8 @@ IRCServersList = []
 
 def getList():
 
+	global isListRequired
+
 	isListRequired = False
 
 	try:
@@ -191,7 +193,7 @@ def on_tryagain(connection, event):
 	on_endofstats(connection, event)	
 
 def on_disconnect(connection, event):
-	print("Connection reset from remote server: " + serverName)
+	print("Connection reset from server")
 	sys.stdout.flush()
 	global failsCount
 	time.sleep(timeSleep)
