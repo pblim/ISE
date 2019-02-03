@@ -1,6 +1,6 @@
-#! /usr/bin/env python
+#!/usr/bin/env python
 #
-# author: Paweł Archacki - pbl@IRCNet
+# author: Pawel Archacki - pbl@IRCNet
 # mail: 	  archacki85@gmail.com
 # License GPLv2
 
@@ -26,9 +26,52 @@ isListRequired = True
 listPosition =0 
 failsCount = 0
 PATH = '/home/iline/ilinebot/db'
-IRCServersList = []
+IRCServersList = ['vienna.irc.at',
+'ircnet.clue.be',
+'irc.atw-inter.net',
+'eris.us.ircnet.net',
+'irc.nlnog.net',
+'irc.psychz.net',
+'irc.portlane.se',
+'openirc.snt.utwente.nl',
+'irc.us.ircnet.net',
+'ssl.irc.atw-inter.net',
+'irc2.ipv6.cesnet.cz',
+'irc.felk.cvut.cz',
+'irc.nfx.cz',
+'irc.dotsrc.org',
+'irc.starman.ee',
+'irc.datanet.ee',
+'irc.cs.hut.fi',
+'solmu.cc.tut.fi',
+'irc.oulu.fi',
+'irc.lut.fi',
+'irc.nebula.fi',
+'irc.elisa.fi',
+'irc2.inet.fi',
+'fu-berlin.de',
+'MAN-DA.DE',
+'Uni-Erlangen.DE',
+'TUM.DE',
+'BelWue.DE',
+'atw.irc.hu',
+'ssl.atw.irc.hu',
+'irc6.tophost.it',
+'dh.ircnet.ne.jp',
+'irc-2112p3.media.kyoto-u.ac.jp',
+'irc.media.kyoto-u.ac.jp',
+'irc.snt.utwente.nl',
+'irc2.snt.ipv6.utwente.nl',
+'irc.home.uit.no',
+'ircnet.underworld.no',
+'irc1.ifi.uio.no',
+'poznan.irc.pl',
+'irc.arnes.si',
+'irc.okit.se',
+'irc.swipnet.se',
+'eu.irc6.net']
 
-def getList():
+"""def getList():
 
 	global isListRequired
 
@@ -40,7 +83,7 @@ def getList():
 		i =0
 		for link in soup.find_all('a', href = re.compile(r'.*details.cgi*')):
 			s = str(link.get_text().lower())
-			if (str(s.split('.')[0]) != 'hub' and str(s.split('.')[0]) != 'irc-2112p3'):
+			if (str(s.split('.')[0]) != 'hub' and str(s.split('.')[0]) != 'irc-2112p3'  and str(s.split('.')[0]) != 'openirc2' and str(s.split(' ')[0]) != 'irc2.snt.utwente.nl' and str(s.split(' ')[0]) != 'irc.opoy.fi' and str(s.split(' ')[0]) != 'irc.media.kyoto-u.ac.jp'):
 				match = re.search(r'\]', s)
 				if match:
 					s = s.split(' ')[0]
@@ -50,7 +93,7 @@ def getList():
 			#print (x)
 
 	except:
-		scriptEnd(connection)
+		scriptEnd(connection)"""
 
 
 def scriptEnd(connection):
@@ -216,7 +259,7 @@ def get_args():
 	parser = argparse.ArgumentParser()
 	parser.add_argument('server')
 	parser.add_argument('nickname')
-	parser.add_argument('-p', '--port', default=6667, type=int)
+	parser.add_argument('-p', '--port', default=5555, type=int)
 	jaraco.logging.add_arguments(parser)
 	return parser.parse_args()	
 
@@ -224,12 +267,12 @@ def main():
 	
 	global IPv4_FILE, IPv6_FILE, ERROR_FILE, STATUS_FILE, serverName, listPosition, listSizeMax, failsCount, isListRequired
 	
-	if isListRequired:
+	"""if isListRequired:
 		try:
 			getList()
 		except:
 			print("Can not pares list from the website")
-			sys.exit(1)
+			sys.exit(1)"""
 
 	listSizeMax = len(IRCServersList)
 	IPv4_FILE = open(PATH + "/IPV4_FILE.db", "a")
