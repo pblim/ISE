@@ -16,9 +16,9 @@ from time import gmtime, strftime
 from netaddr import *
 from bs4 import BeautifulSoup
 
-#Time beetwen querys - 15 second is a good TIME. 
+#Time beetwen querys
 global timeSleep
-timeSleep = 20
+timeSleep = 40
 
 # Main
 global failsCount, listPosition, PATH, isListRequired
@@ -26,8 +26,10 @@ isListRequired = True
 listPosition =0 
 failsCount = 0
 PATH = '/home/iline/ilinebot/db'
-IRCServersList = ['vienna.irc.at',
+IRCServersList = [
+'irc.snt.utwente.nl',
 'ircnet.clue.be',
+'irc2.snt.ipv6.utwente.nl',
 'irc.atw-inter.net',
 'eris.us.ircnet.net',
 'irc.nlnog.net',
@@ -60,8 +62,6 @@ IRCServersList = ['vienna.irc.at',
 'dh.ircnet.ne.jp',
 'irc-2112p3.media.kyoto-u.ac.jp',
 'irc.media.kyoto-u.ac.jp',
-'irc.snt.utwente.nl',
-'irc2.snt.ipv6.utwente.nl',
 'irc.home.uit.no',
 'ircnet.underworld.no',
 'irc1.ifi.uio.no',
@@ -167,12 +167,10 @@ def on_statsiline(connection, event):
 	try:
 		IPNet = IPNetwork(ipToParse)
 
-		if IPNet.version == 4:
-			
+		if IPNet.version == 4:		
 			parser_ipv4(IPNet)
 			
-		elif IPNet.version == 6:
-			
+		elif IPNet.version == 6:			
 			parser_ipv6(IPNet)
 
 	except AddrFormatError:
@@ -185,7 +183,6 @@ def on_endofstats(connection, event):
 	listPosition +=1
 	
 	if listPosition == listSizeMax:
-	
 		scriptEnd(connection)
 
 	print ("Waiting for next query...")
@@ -195,6 +192,7 @@ def on_endofstats(connection, event):
 		serverName = IRCServersList[listPosition]
 		print("Getting list from: " + serverName + " [ " + str(listPosition+1) + " / " + str(listSizeMax) + " ]")
 		connection.stats("I",IRCServersList[listPosition])
+		failsCount =0
 	except:
 		ERROR_FILE.write(strftime("%Y-%m-%d %H:%M:%S", gmtime()) + " ERROR: Something went wrong while trying to get i line list from: " + serverName + "\n")
 
@@ -284,9 +282,10 @@ def main():
 	jaraco.logging.setup(args)
 	reactor = irc.client.Reactor()
 	sys.stdout.write("Connecting to server...\n")
-	sys.stdout.flush()
+	#sys.stdout.flush()
 	try:
 		c = reactor.server().connect(args.server, args.port, args.nickname)
+		print("CONNECTED")
 	except irc.client.ServerConnectionError as x:
 		print(x)
 		scriptEnd(connection)
