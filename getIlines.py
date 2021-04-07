@@ -18,7 +18,7 @@ from bs4 import BeautifulSoup
 
 #Time beetwen querys
 global timeSleep
-timeSleep = 40
+timeSleep = 20
 
 # Main
 global failsCount, listPosition, PATH, isListRequired
@@ -26,14 +26,20 @@ isListRequired = True
 listPosition =0 
 failsCount = 0
 PATH = '/home/iline/ilinebot/db'
+#IRCServersList = []
 IRCServersList = [
 'irc.snt.utwente.nl',
-'ircnet.clue.be',
 'irc2.snt.ipv6.utwente.nl',
-'irc.atw-inter.net',
-'eris.us.ircnet.net',
-'irc.nlnog.net',
+'fu-berlin.de',
 'irc.psychz.net',
+'MAN-DA.DE',
+'Uni-Erlangen.DE',
+#'TUM.DE',
+'BelWue.DE',
+'irc.atw-inter.net',
+#'eris.us.ircnet.net',
+'ircnet.hostsailor.com',
+'irc.nlnog.net',
 'irc.portlane.se',
 'openirc.snt.utwente.nl',
 'irc.us.ircnet.net',
@@ -51,19 +57,14 @@ IRCServersList = [
 'irc.nebula.fi',
 'irc.elisa.fi',
 'irc2.inet.fi',
-'fu-berlin.de',
-'MAN-DA.DE',
-'Uni-Erlangen.DE',
-'TUM.DE',
-'BelWue.DE',
 'atw.irc.hu',
 'ssl.atw.irc.hu',
 'irc6.tophost.it',
 'dh.ircnet.ne.jp',
-'irc-2112p3.media.kyoto-u.ac.jp',
+#'irc-2112p3.media.kyoto-u.ac.jp',
 'irc.media.kyoto-u.ac.jp',
-'irc.home.uit.no',
 'ircnet.underworld.no',
+'datapacket.hk.ircnet.net',
 'irc1.ifi.uio.no',
 'poznan.irc.pl',
 'irc.arnes.si',
@@ -71,10 +72,8 @@ IRCServersList = [
 'irc.swipnet.se',
 'eu.irc6.net']
 
-"""def getList():
-
+def getList():
 	global isListRequired
-
 	isListRequired = False
 
 	try:
@@ -83,18 +82,17 @@ IRCServersList = [
 		i =0
 		for link in soup.find_all('a', href = re.compile(r'.*details.cgi*')):
 			s = str(link.get_text().lower())
-			if (str(s.split('.')[0]) != 'hub' and str(s.split('.')[0]) != 'irc-2112p3'  and str(s.split('.')[0]) != 'openirc2' and str(s.split(' ')[0]) != 'irc2.snt.utwente.nl' and str(s.split(' ')[0]) != 'irc.opoy.fi' and str(s.split(' ')[0]) != 'irc.media.kyoto-u.ac.jp'):
+			if (str(s.split('.')[0]) != 'hub' and str(s.split('.')[0]) != 'irc-2112p3'  and str(s.split('.')[0]) != 'openirc2' and str(s.split(' ')[0]) != 'irc2.snt.utwente.nl' and str(s.split(' ')[0]) != 'irc.opoy.fi' and str(s.split(' ')[0]) != 'irc.psychz.net' and str(s.split(' ')[0]) != 'irc.home.uit.no' and str(s.split(' ')[0]) != 'irc.media.kyoto-u.ac.jp'):
 				match = re.search(r'\]', s)
 				if match:
 					s = s.split(' ')[0]
 				IRCServersList.insert(i, s)
 				i +=1
-		#for x in IRCServersList:
-			#print (x)
+		for x in IRCServersList:
+			print (x)
 
 	except:
-		scriptEnd(connection)"""
-
+		scriptEnd(connection)
 
 def scriptEnd(connection):
 	IPv4_FILE.close()
@@ -106,9 +104,6 @@ def scriptEnd(connection):
 	sys.exit(0)
 
 def writeData(srvName, ipNet, ipBroad, ipMask, cctld, tld, protocol):
-
-	#print ("DEBUG :" + serverName + "|" + ipNet +"|" + ipBroad + "|" + ipMask + "|" + cctld + "|" + tld + "\n")
-
 	if protocol == "IPv4":
 		IPv4_FILE.write(serverName + "|" + ipNet +"|" + ipBroad + "|" + ipMask + "|" + cctld + "|" + tld + "\n")
 
@@ -257,7 +252,7 @@ def get_args():
 	parser = argparse.ArgumentParser()
 	parser.add_argument('server')
 	parser.add_argument('nickname')
-	parser.add_argument('-p', '--port', default=5555, type=int)
+	parser.add_argument('-p', '--port', default=6667, type=int)
 	jaraco.logging.add_arguments(parser)
 	return parser.parse_args()	
 
